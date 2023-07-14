@@ -6,20 +6,20 @@
         <div class="col-md-4">
             <ul class="nav nav-pills">
               <li class="nav-item">
-                <a class="nav-link btn btn-success" href="#">online<span class="badge badge-light">{{this.info.peers_count}} peers</span></a>
+                <a class="nav-link btn btn-success" href="#">{{ stateNode }}<span class="badge badge-light">{{this.info.peers_count}} peers</span></a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">Well Balanced <span class="badge badge-secondary">16</span></a>
+                <a class="nav-link" href="#">Well Balanced <span class="badge badge-secondary"></span></a>
               </li>
             </ul>
             <p>
               BTC: 0.0007655 / USD: 23.41
             </p>
             <p>
-              Total active Channels: 23
+              Total active Channels: {{ this.info.channel_count }}
             </p>
             <h1>
-              765503 sats
+              {{ this.info.capacity }} sats
             </h1>
             
 
@@ -33,20 +33,18 @@
             
             <div class="col-md-4">
           <div class="card">
-            <h5 class="card-header">
-              welcome: alia-node
-            </h5>
+            
             <div class="card-body">
               <p class="card-text">
                 <ul class="list-group list-group-flush">
-                  <li class="list-group-item">Alias: <span><strong> {{ info.alias  }}</strong></span></li>
+                  <li class="list-group-item">Alias: <span><strong> {{ info.alias }} </strong></span></li>
                   <li class="list-group-item">Network: <span><strong> Signet</strong></span></li>
                   <li class="list-group-item">Version: <span><strong> 0.221</strong></span></li>
                   </ul>
               </p>
             </div>
             <div class="card-footer">
-              pubkey address: 
+              pubkey address: {{ this.info.public_key }}
             </div>
           </div>
         </div>
@@ -54,10 +52,10 @@
           <div class="list-group">
             <a href="#" class="list-group-item list-group-item-action active"><h3>Node Balances</h3></a>
             <div class="list-group-item">
-              <h6 class="list-group-item-heading">Lightning Network <em style="font-weight: 100;">0.00077852 sats</em></h6>
+              <h6 class="list-group-item-heading">Lightning Network <em style="font-weight: 100;">{{ this.info.capacity }} sats</em></h6>
             </div>
             <div class="list-group-item">
-              <h6 class="list-group-item-heading">Bitcoin Network <em style="font-weight: 100;">0.00077852 sats</em></h6>
+              <h6 class="list-group-item-heading">Bitcoin Network <em style="font-weight: 100;">{{ this.info.chain_balance }} sats</em></h6>
             </div>
             <div class="list-group-item justify-content-between">
             </div> <a href="#" class="list-group-item list-group-item-action active justify-content-between">total balance: 0.825568 sats</a>
@@ -126,22 +124,6 @@
                 <!--_ends List of Channels -->
               </div>
           </div>
-          <div class="col-md-4">
-            <div class="card">
-              <h5 class="card-header">
-                Card title
-              </h5>
-              <div class="card-body">
-                <p class="card-text">
-                  Card content
-                </p>
-              </div>
-              <div class="card-footer">
-                Card footer
-              </div>
-            </div>
-          </div>
-
           <div id="chart">
             <apexchart type="bar" height="350" :options="chartOptions" :series="series"></apexchart>
           </div>
@@ -210,26 +192,22 @@
           offsetX: 40
         },
       },
+      stateNode: 'Offline',
       info: {
-          alias:'',
+          alias:'02ae6c44bd950330fc109b29536484dcf107729581db2ec95124d9a1661e8cf508',
           peers_count: 0,
           public_key: '',
           is_synced_to_chain: false,
           is_synced_to_graph: false,
+          capacity: 0,
+          channel_count: 0,
+          chain_balance: 0,
         }
       }
     },
     
     mounted() {
-        API.get('http://192.168.55.67:3000/api/getInfo')
-        .then(response => {
-          this.info.alias = response.data.alias;
-          this.info.peers_count = response.data.peers_count;
-          this.info.public_key = response.data.public_key;
-          this.info.is_synced_to_chain = response.data.is_synced_to_chain;
-          this.info.is_synced_to_graph = response.data.is_synced_to_graph;
-          console.log(this.info); 
-        });
+        
     },
 
     methods: {
@@ -242,7 +220,33 @@
           this.info.public_key = response.data.public_key;
           this.info.is_synced_to_chain = response.data.is_synced_to_chain;
           this.info.is_synced_to_graph = response.data.is_synced_to_graph;
-          console.log(this.info); 
+          this.getNodeInfo(response.data.public_key);
+          if(this.info.is_synced_to_chain == true && this.info.is_synced_to_graph == true){
+            this.stateNode = 'Online';
+          } else{
+              this.stateNode = 'Offline';
+          }
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async getNodeInfo(key) {
+      try {
+        let response = await API.get('http://192.168.55.67:3000/api/getNodoInfo/'+key)
+        .then(response => {
+          this.info.capacity = response.data.capacity;
+          this.info.channel_count = response.data.channel_count;
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async getChainBalance() {
+      try {
+        let response = await API.get('http://192.168.55.67:3000/api/getChainBalance/')
+        .then(response => {
+          this.info.chain_balance = response.data.chain_balance;
         });
       } catch (error) {
         console.log(error);
@@ -252,6 +256,8 @@
 
   created() {
     this.getData();
+    this.getNodeInfo();
+    this.getChainBalance();
   },
   }
 </script>
