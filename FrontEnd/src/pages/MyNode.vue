@@ -69,65 +69,10 @@
               <div class="list-group-item">
                 List of all the channels known by this node
               </div>
-              <div class="list-group-item">
-                <!-- List of Channels-->
-                <div id="accordion" class="width:100%">
-                  <div class="card">
-                    <div class="card-header" id="headingOne">
-                    <h5 class="mb-0">
-                      <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                      <span class="badge badge-success" style="margin-right: 5%">Active</span>
-                      <span>Channel id</span>
-                      <span style="font-weight: 100; color: dimgray;">Total Capacity: 2315 sats</span> 
-                      </button>
-                    </h5>
-                    </div>
-                  
-                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                    <div class="card-body">
-                      Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                    </div>
-                    </div>
-                  </div>
-                  <div class="card">
-                    <div class="card-header" id="headingTwo">
-                    <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                      Collapsible Group Item #2
-                      </button>
-                    </h5>
-                    </div>
-                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-                    <div class="card-body">
-                      Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                    </div>
-                    </div>
-                  </div>
-                  <div class="card">
-                    <div class="card-header" id="headingThree">
-                    <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                      Collapsible Group Item #3
-                      </button>
-                    </h5>
-                    </div>
-                    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
-                    <div class="card-body">
-                      Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                    </div>
-                    <div>
-                      <apexchart width="500" type="bar" :options="chartOptions" :series="series"></apexchart>
-                    </div>
-                    </div>
-                  </div>
-                  </div>
-                <!--_ends List of Channels -->
+              <div id="chart">
+                <apexchart ref="mychart" type="bar" height="350" :options="chartOptions" :series="series"></apexchart>
               </div>
           </div>
-          <div id="chart">
-            <apexchart type="bar" height="350" :options="chartOptions" :series="series"></apexchart>
-          </div>
-
         </div>
       </div>
     </div>
@@ -146,12 +91,12 @@
       return {        
         series: [
         {
-          name: 'Marine Sprite',
-          data: [44, 55, 41, 37, 22, 43, 21]
+          name: 'Local',
+          data: []
         }, 
         {
-          name: 'Striking Calf',
-          data: [53, 32, 33, 52, 13, 43, 32]
+          name: 'Remote',
+          data: []
         }
       ],
       chartOptions: {
@@ -174,7 +119,7 @@
           text: '100% Stacked Bar'
         },
         xaxis: {
-          categories: [2008, 2009, 2010, 2011, 2012, 2013, 2014],
+          categories: [],
         },
         tooltip: {
           y: {
@@ -194,7 +139,7 @@
       },
       stateNode: 'Offline',
       info: {
-          alias:'02ae6c44bd950330fc109b29536484dcf107729581db2ec95124d9a1661e8cf508',
+          alias:'',
           peers_count: 0,
           public_key: '',
           is_synced_to_chain: false,
@@ -202,7 +147,10 @@
           capacity: 0,
           channel_count: 0,
           chain_balance: 0,
-        }
+        },
+      channels:[
+
+      ]
       }
     },
     
@@ -213,7 +161,7 @@
     methods: {
     async getData() {
       try {
-        let response = await API.get('http://192.168.55.67:3000/api/getInfo')
+        let response = await API.get('http://192.168.137.228:3000/api/getInfo')
         .then(response => {
           this.info.alias = response.data.alias;
           this.info.peers_count = response.data.peers_count;
@@ -233,7 +181,7 @@
     },
     async getNodeInfo(key) {
       try {
-        let response = await API.get('http://192.168.55.67:3000/api/getNodoInfo/'+key)
+        let response = await API.get('http://192.168.137.228:3000/api/getNodoInfo/'+key)
         .then(response => {
           this.info.capacity = response.data.capacity;
           this.info.channel_count = response.data.channel_count;
@@ -244,7 +192,7 @@
     },
     async getChainBalance() {
       try {
-        let response = await API.get('http://192.168.55.67:3000/api/getChainBalance/')
+        let response = await API.get('http://192.168.137.228:3000/api/getChainBalance/')
         .then(response => {
           this.info.chain_balance = response.data.chain_balance;
         });
@@ -252,12 +200,40 @@
         console.log(error);
       }
     },
+    async getChannels() {
+      try {
+            let response = await API.get('http://192.168.137.228:3000/api/getChannels/')
+            .then(response => {
+              let channels = response.data.channels;
+              console.log(channels);
+              for(const i in channels){
+                      console.log(channels[i].capacity);
+                      this.chartOptions.xaxis.categories.push(channels[i].id);
+                      this.series[0].data.push(channels[i].local_balance);
+                      this.series[1].data.push(channels[i].remote_balance);
+                  }
+                  this.$refs.mychart.updateSeries([
+                      {
+                        name: 'Local',
+                        data: this.series[0].data,
+                      }, 
+                      {
+                        name: 'Remote',
+                        data: this.series[1].data,
+                      }],
+                   true, true);
+              });
+          } catch (error) {
+            console.log(error);
+          }
+    },
   },
 
   created() {
     this.getData();
     this.getNodeInfo();
     this.getChainBalance();
+    this.getChannels();
   },
   }
 </script>
