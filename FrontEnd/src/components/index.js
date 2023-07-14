@@ -11,6 +11,8 @@ import StatsCard from './Cards/StatsCard.vue'
 
 import SidebarPlugin from './SidebarPlugin'
 
+import '@/plugins/apexcharts'
+
 let components = {
   BaseCheckbox,
   Radio,
