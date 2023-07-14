@@ -230,7 +230,29 @@
           this.info.is_synced_to_graph = response.data.is_synced_to_graph;
           console.log(this.info); 
         });
-    }
+    },
+
+    methods: {
+    async getData() {
+      try {
+        let response = await API.get('http://192.168.55.67:3000/api/getInfo')
+        .then(response => {
+          this.info.alias = response.data.alias;
+          this.info.peers_count = response.data.peers_count;
+          this.info.public_key = response.data.public_key;
+          this.info.is_synced_to_chain = response.data.is_synced_to_chain;
+          this.info.is_synced_to_graph = response.data.is_synced_to_graph;
+          console.log(this.info); 
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  },
+
+  created() {
+    this.getData();
+  },
   }
 </script>
 <style>
