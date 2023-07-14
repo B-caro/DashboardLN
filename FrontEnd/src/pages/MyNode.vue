@@ -39,7 +39,7 @@
             <div class="card-body">
               <p class="card-text">
                 <ul class="list-group list-group-flush">
-                  <li class="list-group-item">Alias: <span><strong> Alice</strong></span></li>
+                  <li class="list-group-item">Alias: <span><strong> {{ info.alias  }}</strong></span></li>
                   <li class="list-group-item">Network: <span><strong> Signet</strong></span></li>
                   <li class="list-group-item">Version: <span><strong> 0.221</strong></span></li>
                   </ul>
@@ -162,7 +162,9 @@
     
     data () {
       return {
-        info: [],
+        info: {
+          alias:''
+        },
         series: [
         {
           name: 'Marine Sprite',
@@ -215,9 +217,9 @@
     },
     
     mounted() {
-      API.get('http://192.168.55.53:8000/getinfo')
+        API.get('http://192.168.55.67:3000/api/getInfo')
         .then(response => {
-          this.info = response.data;
+          this.info.alias = response.data.alias;
           console.log(this.info); 
         });
  
