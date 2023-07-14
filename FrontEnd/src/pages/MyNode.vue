@@ -6,7 +6,7 @@
         <div class="col-md-4">
             <ul class="nav nav-pills">
               <li class="nav-item">
-                <a class="nav-link btn btn-success" href="#">online<span class="badge badge-light">10 peers</span></a>
+                <a class="nav-link btn btn-success" href="#">online<span class="badge badge-light">{{this.info.peers_count}} peers</span></a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#">Well Balanced <span class="badge badge-secondary">16</span></a>
@@ -161,10 +161,7 @@
     },
     
     data () {
-      return {
-        info: {
-          alias:''
-        },
+      return {        
         series: [
         {
           name: 'Marine Sprite',
@@ -211,8 +208,15 @@
           position: 'top',
           horizontalAlign: 'left',
           offsetX: 40
+        },
+      },
+      info: {
+          alias:'',
+          peers_count: 0,
+          public_key: '',
+          is_synced_to_chain: false,
+          is_synced_to_graph: false,
         }
-      }
       }
     },
     
@@ -220,9 +224,12 @@
         API.get('http://192.168.55.67:3000/api/getInfo')
         .then(response => {
           this.info.alias = response.data.alias;
+          this.info.peers_count = response.data.peers_count;
+          this.info.public_key = response.data.public_key;
+          this.info.is_synced_to_chain = response.data.is_synced_to_chain;
+          this.info.is_synced_to_graph = response.data.is_synced_to_graph;
           console.log(this.info); 
         });
- 
     }
   }
 </script>
