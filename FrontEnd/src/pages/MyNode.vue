@@ -16,10 +16,10 @@
               BTC: 0.0007655 / USD: 23.41
             </p>
             <p>
-              Total active Channels: {{ this.info.channel_count }}
+              Total active Channels: {{ this.info.num_active_channels }}
             </p>
             <h1>
-              {{ this.info.capacity }} sats
+              {{ this.info.balance }} sats
             </h1>
             
 
@@ -37,7 +37,7 @@
             <div class="card-body">
               <p class="card-text">
                 <ul class="list-group list-group-flush">
-                  <li class="list-group-item">Alias: <span><strong> {{ info.alias }} </strong></span></li>
+                  <li class="list-group-item">Alias: <span><strong> {{ this.info.alias }} </strong></span></li>
                   <li class="list-group-item">Network: <span><strong> Signet</strong></span></li>
                   <li class="list-group-item">Version: <span><strong> 0.221</strong></span></li>
                   </ul>
@@ -52,13 +52,13 @@
           <div class="list-group">
             <a href="#" class="list-group-item list-group-item-action active"><h3>Node Balances</h3></a>
             <div class="list-group-item">
-              <h6 class="list-group-item-heading">Lightning Network <em style="font-weight: 100;">{{ this.info.capacity }} sats</em></h6>
+              <h6 class="list-group-item-heading">Lightning Network <em style="font-weight: 100;">{{ this.info.balance }} sats</em></h6>
             </div>
             <div class="list-group-item">
               <h6 class="list-group-item-heading">Bitcoin Network <em style="font-weight: 100;">{{ this.info.chain_balance }} sats</em></h6>
             </div>
             <div class="list-group-item justify-content-between">
-            </div> <a href="#" class="list-group-item list-group-item-action active justify-content-between">total balance: 0.825568 sats</a>
+            </div> <a href="#" class="list-group-item list-group-item-action active justify-content-between">total balance: 150 sats</a>
           </div>
         </div>
       </div>
@@ -145,8 +145,9 @@
           is_synced_to_chain: false,
           is_synced_to_graph: false,
           capacity: 0,
-          channel_count: 0,
           chain_balance: 0,
+          balance: 0,
+          num_active_channels: 0,
         },
       channels:[
 
@@ -161,14 +162,14 @@
     methods: {
     async getData() {
       try {
-        let response = await API.get('http://192.168.137.228:3000/api/getInfo')
+        let response = await API.get('http://192.168.137.149:8000/api/getInfo')
         .then(response => {
           this.info.alias = response.data.alias;
-          this.info.peers_count = response.data.peers_count;
-          this.info.public_key = response.data.public_key;
-          this.info.is_synced_to_chain = response.data.is_synced_to_chain;
-          this.info.is_synced_to_graph = response.data.is_synced_to_graph;
-          this.getNodeInfo(response.data.public_key);
+          this.info.peers_count = response.data.num_peers;
+          this.info.public_key = response.data.identity_pubkey;
+          this.info.is_synced_to_chain = response.data.synced_to_chain;
+          this.info.is_synced_to_graph = response.data.synced_to_graph;
+          this.info.num_active_channels = response.data.num_active_channels;
           if(this.info.is_synced_to_chain == true && this.info.is_synced_to_graph == true){
             this.stateNode = 'Online';
           } else{
@@ -179,12 +180,11 @@
         console.log(error);
       }
     },
-    async getNodeInfo(key) {
+    async getNodeInfo() {
       try {
-        let response = await API.get('http://192.168.137.228:3000/api/getNodoInfo/'+key)
+        let response = await API.get('http://192.168.137.149:8000/api/getNodoInfo/')
         .then(response => {
           this.info.capacity = response.data.capacity;
-          this.info.channel_count = response.data.channel_count;
         });
       } catch (error) {
         console.log(error);
@@ -192,9 +192,19 @@
     },
     async getChainBalance() {
       try {
-        let response = await API.get('http://192.168.137.228:3000/api/getChainBalance/')
+        let response = await API.get('http://192.168.137.149:8000/api/walletBalance/')
         .then(response => {
-          this.info.chain_balance = response.data.chain_balance;
+          this.info.chain_balance = response.data.total_balance;
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async getChannelBalance() {
+      try {
+        let response = await API.get('http://192.168.137.149:8000/api/getChannelBalance/')
+        .then(response => {
+          this.info.balance = response.data.balance;
         });
       } catch (error) {
         console.log(error);
@@ -202,13 +212,13 @@
     },
     async getChannels() {
       try {
-            let response = await API.get('http://192.168.137.228:3000/api/getChannels/')
+            let response = await API.get('http://192.168.137.149:8000/api/getChannels/')
             .then(response => {
               let channels = response.data.channels;
               console.log(channels);
               for(const i in channels){
                       console.log(channels[i].capacity);
-                      this.chartOptions.xaxis.categories.push(channels[i].id);
+                      this.chartOptions.xaxis.categories.push(channels[i].peer_alias);
                       this.series[0].data.push(channels[i].local_balance);
                       this.series[1].data.push(channels[i].remote_balance);
                   }
@@ -234,6 +244,7 @@
     this.getNodeInfo();
     this.getChainBalance();
     this.getChannels();
+    this.getChannelBalance();
   },
   }
 </script>
