@@ -4,11 +4,11 @@
       <mobile-menu slot="content"></mobile-menu>
       <sidebar-link to="/admin/MyNode">
         <i class="nc-icon nc-chart-pie-35"></i>
-        <p>Dashboard</p>
+        <p>Node 1</p>
       </sidebar-link>
       <sidebar-link to="/admin/MyChannel">
         <i class="nc-icon nc-circle-09"></i>
-        <p>Channels</p>
+        <p>Node 2</p>
       </sidebar-link>
       
     </side-bar>

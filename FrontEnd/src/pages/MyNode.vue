@@ -58,7 +58,7 @@
               <h6 class="list-group-item-heading">Bitcoin Network <em style="font-weight: 100;">{{ this.info.chain_balance }} sats</em></h6>
             </div>
             <div class="list-group-item justify-content-between">
-            </div> <a href="#" class="list-group-item list-group-item-action active justify-content-between">total balance: 150 sats</a>
+            </div> <a href="#" class="list-group-item list-group-item-action active justify-content-between">total balance:  </a>
           </div>
         </div>
       </div>
@@ -74,6 +74,7 @@
               </div>
           </div>
         </div>
+        
       </div>
     </div>
   </div>
@@ -162,7 +163,7 @@
     methods: {
     async getData() {
       try {
-        let response = await API.get('http://192.168.137.149:8000/api/getInfo')
+        let response = await API.get('http://192.168.142.149:8000/api/getInfo')
         .then(response => {
           this.info.alias = response.data.alias;
           this.info.peers_count = response.data.num_peers;
@@ -182,7 +183,7 @@
     },
     async getNodeInfo() {
       try {
-        let response = await API.get('http://192.168.137.149:8000/api/getNodoInfo/')
+        let response = await API.get('http://192.168.142.149:8000/api/getNodoInfo/')
         .then(response => {
           this.info.capacity = response.data.capacity;
         });
@@ -192,7 +193,7 @@
     },
     async getChainBalance() {
       try {
-        let response = await API.get('http://192.168.137.149:8000/api/walletBalance/')
+        let response = await API.get('http://192.168.142.149:8000/api/walletBalance/')
         .then(response => {
           this.info.chain_balance = response.data.total_balance;
         });
@@ -202,7 +203,7 @@
     },
     async getChannelBalance() {
       try {
-        let response = await API.get('http://192.168.137.149:8000/api/getChannelBalance/')
+        let response = await API.get('http://192.168.142.149:8000/api/getChannelBalance/')
         .then(response => {
           this.info.balance = response.data.balance;
         });
@@ -212,7 +213,7 @@
     },
     async getChannels() {
       try {
-            let response = await API.get('http://192.168.137.149:8000/api/getChannels/')
+            let response = await API.get('http://192.168.142.149:8000/api/getChannels/')
             .then(response => {
               let channels = response.data.channels;
               console.log(channels);
