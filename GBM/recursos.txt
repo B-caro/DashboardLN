@@ -1,0 +1,25 @@
+import numpy as np
+
+num_aleatorios = np.random.randint(0, 100, (6, 6))
+
+clone = num_aleatorios.copy()
+
+diagonal = np.diag(clone)
+
+print('Tú carton de juego:')
+print(num_aleatorios)
+print('')
+print('Fichas encontradas:')
+print(clone)
+print('')
+print('Diagonal principal:')
+print(diagonal)
+print('')
+print('Diagonal secundaria:')
+print(np.diag(np.fliplr(clone)))
+print('')
+print('Fila:')
+print(clone[0, :])
+print('')
+print('Columna:')
+print(clone[:, 0])
